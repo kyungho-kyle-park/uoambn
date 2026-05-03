@@ -571,7 +571,7 @@ body {
 #solution-code .CodeMirror {
   font-family: var(--font-mono);
   font-size: 13px; line-height: 1.65;
-  height: auto !important; max-height: 320px;
+  height: auto !important; max-height: 520px; overflow-y: auto !important;
   border: none;
   background: var(--code-bg) !important;
 }
