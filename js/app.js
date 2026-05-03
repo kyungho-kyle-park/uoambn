@@ -251,15 +251,13 @@ function renderSidebar() {
     const weekLocked = weekQs.every(q => isLocked(q));
 
     if (weekLocked) {
-      const unlockDate = new Date(weekQs[0].release_at);
-      const unlockStr  = unlockDate.toLocaleString('en-NZ', { timeZone:'Pacific/Auckland', weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
       return `
         <div class="sidebar-week">
           <div class="week-header">
             <span class="week-header-label">Week ${w}</span>
             <span class="week-header-line"></span>
           </div>
-          <div class="week-locked-msg">🔒 Unlocks ${unlockStr}</div>
+          <div class="week-locked-msg">🔒 Unlocks after class</div>
         </div>`;
     }
 
