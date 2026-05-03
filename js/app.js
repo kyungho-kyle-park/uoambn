@@ -252,7 +252,7 @@ function renderSidebar() {
 
     if (weekLocked) {
       const unlockDate = new Date(weekQs[0].release_at);
-      const unlockStr  = unlockDate.toLocaleString('en-NZ', { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
+      const unlockStr  = unlockDate.toLocaleString('en-NZ', { timeZone:'Pacific/Auckland', weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
       return `
         <div class="sidebar-week">
           <div class="week-header">
