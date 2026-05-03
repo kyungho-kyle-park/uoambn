@@ -245,9 +245,23 @@ function renderSidebar() {
   const weeks = [...new Set(list.map(q => q.week))].sort((a, b) => a - b);
 
   el.innerHTML = weeks.map(w => {
-    const weekQs   = list.filter(q => q.week === w);
-    const weekDone = weekQs.filter(q => state.questionStatus.get(String(q.id)) === 'done').length;
-    const sets     = [...new Set(weekQs.map(q => q.set))].sort((a, b) => a - b);
+    const weekQs    = list.filter(q => q.week === w);
+    const weekDone  = weekQs.filter(q => state.questionStatus.get(String(q.id)) === 'done').length;
+    const sets      = [...new Set(weekQs.map(q => q.set))].sort((a, b) => a - b);
+    const weekLocked = weekQs.every(q => isLocked(q));
+
+    if (weekLocked) {
+      const unlockDate = new Date(weekQs[0].release_at);
+      const unlockStr  = unlockDate.toLocaleString('en-NZ', { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
+      return `
+        <div class="sidebar-week">
+          <div class="week-header">
+            <span class="week-header-label">Week ${w}</span>
+            <span class="week-header-line"></span>
+          </div>
+          <div class="week-locked-msg">🔒 Unlocks ${unlockStr}</div>
+        </div>`;
+    }
 
     return `
       <div class="sidebar-week">
