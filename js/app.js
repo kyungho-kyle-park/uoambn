@@ -1,7 +1,7 @@
 import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
 // ─── State ────────────────────────────────────────────────────
-const Q_VERSION = '2026-05-04-v2';
+const Q_VERSION = '2026-05-04-v3';
 if (localStorage.getItem('qVersion') !== Q_VERSION) {
   localStorage.removeItem('questionStatus');
   localStorage.setItem('qVersion', Q_VERSION);
@@ -111,7 +111,8 @@ async function startWebR() {
 
       await state.webR.evalRVoid("webr::install('dplyr')");
       await state.webR.evalRVoid("webr::install('ggplot2')");
-      await state.webR.evalRVoid("library(dplyr); library(ggplot2)");
+      await state.webR.evalRVoid("webr::install('DescTools')");
+      await state.webR.evalRVoid("library(dplyr); library(ggplot2); library(DescTools)");
 
       // Pre-build Week 3 Set 1 (KiwiConnect) environment so 'customers' is always available
       try {
