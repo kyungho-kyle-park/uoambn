@@ -1,7 +1,7 @@
 import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
 // ─── State ────────────────────────────────────────────────────
-const Q_VERSION = '2026-05-04-v3';
+const Q_VERSION = '2026-05-04-v4';
 if (localStorage.getItem('qVersion') !== Q_VERSION) {
   localStorage.removeItem('questionStatus');
   localStorage.setItem('qVersion', Q_VERSION);
@@ -112,13 +112,6 @@ async function startWebR() {
       await state.webR.evalRVoid("webr::install('dplyr')");
       await state.webR.evalRVoid("webr::install('ggplot2')");
       await state.webR.evalRVoid("library(dplyr); library(ggplot2)");
-
-      // DescTools is large — install separately so failure doesn't block core packages
-      try {
-        $('load-status').textContent = 'Installing DescTools…';
-        await state.webR.evalRVoid("webr::install('DescTools')");
-        await state.webR.evalRVoid("library(DescTools)");
-      } catch (_) { /* non-fatal — Mode() won't be available but other features work */ }
 
       // Pre-build Week 3 Set 1 (KiwiConnect) environment so 'customers' is always available
       try {
