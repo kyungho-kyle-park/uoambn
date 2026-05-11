@@ -1,7 +1,7 @@
 import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
 // ─── State ────────────────────────────────────────────────────
-const Q_VERSION = '2026-05-04-v4';
+const Q_VERSION = '2026-05-11-v1';
 if (localStorage.getItem('qVersion') !== Q_VERSION) {
   localStorage.removeItem('questionStatus');
   localStorage.setItem('qVersion', Q_VERSION);
@@ -169,6 +169,33 @@ save(members, file = '/tmp/env_w3s3.RData')
 rm(members)
         `);
         state.savedSetEnvs.add('w3s3');
+      } catch (_) { /* non-fatal */ }
+
+      // Pre-build Week 4 FreshMart NZ (shared by Set 1 and Set 2)
+      try {
+        await state.webR.evalRVoid(`
+set.seed(700)
+age_group <- rep(c("<25","25-34","35-44","45-54","55+"), c(20,30,40,35,25))
+loyalty_card <- c(rep(1,6),rep(0,14),rep(1,13),rep(0,17),rep(1,32),rep(0,8),rep(1,24),rep(0,11),rep(1,8),rep(0,17))
+churn_vec <- rep(0,150)
+churn_vec[c(9,14,36,40,46,58,67,84,85,87,89,95,103,110,116,117,119,120,122,123,124,127,129,130,132,133,135,136,137,138,139,140,141,142,143,144,146,148,149,150)] <- 1
+premium_vec <- rep(0,150)
+premium_vec[c(1:13,21:33,51:64)] <- 1
+online_vec <- rep(0,150)
+online_vec[c(1:8,14:17)] <- 1
+weekly_spend <- ifelse(premium_vec==1, round(rnorm(150,180,40),2), round(rnorm(150,72,30),2))
+weekly_spend <- pmax(weekly_spend, 5)
+customers <- data.frame(
+  customer_id=1:150, age_group=age_group,
+  loyalty_card=loyalty_card, churn=churn_vec,
+  premium_member=premium_vec, weekly_spend=weekly_spend,
+  online_order=online_vec, stringsAsFactors=FALSE)
+save(customers, file='/tmp/env_w4s1.RData')
+save(customers, file='/tmp/env_w4s2.RData')
+rm(customers)
+        `);
+        state.savedSetEnvs.add('w4s1');
+        state.savedSetEnvs.add('w4s2');
       } catch (_) { /* non-fatal */ }
 
       state.webrReady = true;
