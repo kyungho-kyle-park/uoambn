@@ -1019,7 +1019,7 @@ function gtmPush(obj) {
 
 function switchQuiz(val) {
   currentQuiz = val;
-  gtmPush({ event: 'quiz_select', quiz: val });
+  gtmPush({ event: 'quiz_select', quiz: val, course: '705' });
   const q1 = document.getElementById('quiz1Content');
   const q2 = document.getElementById('quiz2Content');
   const subtitle = document.getElementById('landingSubtitle');
@@ -1053,7 +1053,7 @@ function renderTopicList() {
 function startQuiz(mode) {
   currentMode = mode;
   activeData = currentQuiz === 'q2' ? quiz2Data : quizData;
-  gtmPush({ event: 'quiz_start', quiz: currentQuiz, mode: mode });
+  gtmPush({ event: 'quiz_start', quiz: currentQuiz, mode: mode, course: '705' });
   score = 0;
   answers = {};
   currentIndex = 0;
@@ -1183,7 +1183,7 @@ function selectOption(selectedIdx) {
 
   answers[currentIndex] = { questionId: q.id, selected: selectedIdx, correct: isCorrect };
   score = Object.values(answers).filter(a => a.correct).length;
-  gtmPush({ event: 'question_answer', quiz: currentQuiz, mode: currentMode, question_id: q.id, correct: isCorrect });
+  gtmPush({ event: 'question_answer', quiz: currentQuiz, mode: currentMode, question_id: q.id, correct: isCorrect, course: '705' });
   document.getElementById('scoreNum').textContent = score;
 
   // Style buttons
@@ -1258,7 +1258,7 @@ function showResults() {
   document.getElementById('resultsScreen').style.display = 'block';
   const _total = questions.length;
   const _correct = Object.values(answers).filter(a => a.correct).length;
-  gtmPush({ event: 'quiz_complete', quiz: currentQuiz, mode: currentMode, score: _correct, total: _total, pct: Math.round((_correct/_total)*100) });
+  gtmPush({ event: 'quiz_complete', quiz: currentQuiz, mode: currentMode, score: _correct, total: _total, pct: Math.round((_correct/_total)*100), course: '705' });
 
   const total = questions.length;
   const answerList = Object.values(answers);
