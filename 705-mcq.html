@@ -368,8 +368,19 @@
     .topic-row-name { width: 140px; font-size: 12px; }
   }
 </style>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W98S7G9M');</script>
+<!-- End Google Tag Manager -->
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W98S7G9M"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <div class="header">
   <div class="header-left">
@@ -1001,8 +1012,14 @@ if (sessionStorage.getItem('auth') !== '1') {
   window.location.replace('index.html');
 }
 
+function gtmPush(obj) {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(obj);
+}
+
 function switchQuiz(val) {
   currentQuiz = val;
+  gtmPush({ event: 'quiz_select', quiz: val });
   const q1 = document.getElementById('quiz1Content');
   const q2 = document.getElementById('quiz2Content');
   const subtitle = document.getElementById('landingSubtitle');
@@ -1036,6 +1053,7 @@ function renderTopicList() {
 function startQuiz(mode) {
   currentMode = mode;
   activeData = currentQuiz === 'q2' ? quiz2Data : quizData;
+  gtmPush({ event: 'quiz_start', quiz: currentQuiz, mode: mode });
   score = 0;
   answers = {};
   currentIndex = 0;
@@ -1165,6 +1183,7 @@ function selectOption(selectedIdx) {
 
   answers[currentIndex] = { questionId: q.id, selected: selectedIdx, correct: isCorrect };
   score = Object.values(answers).filter(a => a.correct).length;
+  gtmPush({ event: 'question_answer', quiz: currentQuiz, mode: currentMode, question_id: q.id, correct: isCorrect });
   document.getElementById('scoreNum').textContent = score;
 
   // Style buttons
@@ -1237,6 +1256,9 @@ function showResults() {
   clearInterval(timerInterval);
   document.getElementById('quizScreen').style.display = 'none';
   document.getElementById('resultsScreen').style.display = 'block';
+  const _total = questions.length;
+  const _correct = Object.values(answers).filter(a => a.correct).length;
+  gtmPush({ event: 'quiz_complete', quiz: currentQuiz, mode: currentMode, score: _correct, total: _total, pct: Math.round((_correct/_total)*100) });
 
   const total = questions.length;
   const answerList = Object.values(answers);
