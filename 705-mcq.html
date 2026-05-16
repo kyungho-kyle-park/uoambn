@@ -329,6 +329,38 @@
 
   .results-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
+  /* QUIZ SELECTOR DROPDOWN */
+  .quiz-selector-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s;
+  }
+  .quiz-selector-wrap:focus-within { border-color: var(--accent); }
+  .quiz-selector-label { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .quiz-selector-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--violet);
+    cursor: pointer;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230c0c48' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0px center;
+  }
+  .quiz-selector-select:focus { outline: none; }
+
   /* RESPONSIVE */
   @media (max-width: 600px) {
     .mode-grid { grid-template-columns: 1fr; }
@@ -358,36 +390,89 @@
 <!-- LANDING -->
 <div class="landing" id="landingScreen">
   <h1>MCQ Quiz <span>Practice</span></h1>
-  <p>Conceptual multiple-choice questions covering Weeks 1-3.<br>Choose a mode to start practising.</p>
+  <p id="landingSubtitle">Conceptual multiple-choice questions covering Weeks 1-3.<br>Choose a mode to start practising.</p>
 
-  <div class="mode-grid">
-    <div class="mode-card" onclick="startQuiz('practice')">
-      <div class="mode-icon">📚</div>
-      <div class="mode-title">Practice Mode</div>
-      <div class="mode-desc">Work through all 40 questions in a randomised order. Instant feedback and explanations after each answer. No time pressure.</div>
-      <div class="mode-meta">
-        <span class="tag">40 questions</span>
-        <span class="tag">Random order</span>
-        <span class="tag">No timer</span>
-        <span class="tag">Full explanations</span>
+  <div class="quiz-selector-wrap">
+    <span class="quiz-selector-label">Quiz</span>
+    <select class="quiz-selector-select" id="quizSelector" onchange="switchQuiz(this.value)">
+      <option value="q1">Quiz 1 &mdash; Weeks 1&ndash;3</option>
+      <option value="q2">Quiz 2 &mdash; Weeks 2&ndash;5</option>
+    </select>
+  </div>
+
+  <!-- Quiz 1 content -->
+  <div id="quiz1Content">
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startQuiz('practice')">
+        <div class="mode-icon">📚</div>
+        <div class="mode-title">Practice Mode</div>
+        <div class="mode-desc">Work through all 40 questions in a randomised order. Instant feedback and explanations after each answer. No time pressure.</div>
+        <div class="mode-meta">
+          <span class="tag">40 questions</span>
+          <span class="tag">Random order</span>
+          <span class="tag">No timer</span>
+          <span class="tag">Full explanations</span>
+        </div>
+      </div>
+      <div class="mode-card" onclick="startQuiz('mock')">
+        <div class="mode-icon">⏱</div>
+        <div class="mode-title">Mock Exam Mode</div>
+        <div class="mode-desc">Simulate the real Quiz 1 — 1 question per topic, 10 questions total, 20-minute countdown timer. Results shown at the end.</div>
+        <div class="mode-meta">
+          <span class="tag">10 questions</span>
+          <span class="tag">1 per topic</span>
+          <span class="tag">20-min timer</span>
+          <span class="tag">Exam conditions</span>
+        </div>
       </div>
     </div>
-    <div class="mode-card" onclick="startQuiz('mock')">
-      <div class="mode-icon">⏱</div>
-      <div class="mode-title">Mock Exam Mode</div>
-      <div class="mode-desc">Simulate the real Quiz 1 — 1 question per topic, 10 questions total, 20-minute countdown timer. Results shown at the end.</div>
-      <div class="mode-meta">
-        <span class="tag">10 questions</span>
-        <span class="tag">1 per topic</span>
-        <span class="tag">20-min timer</span>
-        <span class="tag">Exam conditions</span>
-      </div>
+    <div class="topics-info">
+      <h3>Quiz 1 Topics Covered</h3>
+      <div class="topic-list" id="topicListLanding"></div>
     </div>
   </div>
 
-  <div class="topics-info">
-    <h3>Quiz 1 Topics Covered</h3>
-    <div class="topic-list" id="topicListLanding"></div>
+  <!-- Quiz 2 content -->
+  <div id="quiz2Content" style="display:none">
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startQuiz('practice')">
+        <div class="mode-icon">📚</div>
+        <div class="mode-title">Practice Mode</div>
+        <div class="mode-desc">Work through all 30 conceptual questions covering Monte Carlo simulation, probability distributions, and model interpretation.</div>
+        <div class="mode-meta">
+          <span class="tag">30 questions</span>
+          <span class="tag">Random order</span>
+          <span class="tag">30-min timer</span>
+          <span class="tag">Full explanations</span>
+        </div>
+      </div>
+      <div class="mode-card" onclick="startQuiz('mock')">
+        <div class="mode-icon">⏱</div>
+        <div class="mode-title">Mock Exam Mode</div>
+        <div class="mode-desc">Simulate the real Quiz 2 — 15 questions randomly selected from a 70-question pool. New questions every attempt. Results shown at the end.</div>
+        <div class="mode-meta">
+          <span class="tag">15 questions</span>
+          <span class="tag">Random selection</span>
+          <span class="tag">20-min timer</span>
+          <span class="tag">Exam conditions</span>
+        </div>
+      </div>
+    </div>
+    <div class="topics-info">
+      <h3>Quiz 2 Topics Covered</h3>
+      <div class="topic-list">
+        <div class="topic-item"><div class="diff-dot easy"></div><span>Monte Carlo Fundamentals</span></div>
+        <div class="topic-item"><div class="diff-dot moderate"></div><span>What-If vs Monte Carlo</span></div>
+        <div class="topic-item"><div class="diff-dot moderate"></div><span>Probability Distributions</span></div>
+        <div class="topic-item"><div class="diff-dot moderate"></div><span>Choosing a Distribution</span></div>
+        <div class="topic-item"><div class="diff-dot moderate"></div><span>Simulation Output Interpretation</span></div>
+        <div class="topic-item"><div class="diff-dot hard"></div><span>Confidence Intervals</span></div>
+        <div class="topic-item"><div class="diff-dot moderate"></div><span>Verification vs Validation</span></div>
+        <div class="topic-item"><div class="diff-dot easy"></div><span>Advantages &amp; Limitations</span></div>
+        <div class="topic-item"><div class="diff-dot hard"></div><span>Dependent Random Variables</span></div>
+        <div class="topic-item"><div class="diff-dot moderate"></div><span>Resampling vs Distribution Fitting</span></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -469,8 +554,440 @@
 </div>
 
 <script>
+const quiz2Data = {
+  topics:[
+    {id:'t2_1',name:'Monte Carlo Fundamentals',difficulty:'Easy'},
+    {id:'t2_2',name:'What-If & Scenario Analysis',difficulty:'Moderate'},
+    {id:'t2_3',name:'Probability Distributions',difficulty:'Moderate'},
+    {id:'t2_4',name:'Choosing a Distribution',difficulty:'Moderate'},
+    {id:'t2_5',name:'Simulation Output & CI',difficulty:'Hard'},
+    {id:'t2_6',name:'Model Design & Structure',difficulty:'Moderate'},
+    {id:'t2_7',name:'Excel Functions',difficulty:'Moderate'},
+    {id:'t2_8',name:'Best Practice & Theory',difficulty:'Moderate'}
+  ],
+  questions:[
+    {id:'q2_01',topicId:'t2_1',difficulty:'Easy',week:2,
+     question:'Which of the following best describes the primary purpose of Monte Carlo simulation?',
+     options:['To eliminate uncertainty from spreadsheet parameters and produce a single accurate forecast','To use probability distributions to estimate the relative likelihood of various outcomes','To find the single optimal solution by minimising or maximising an objective function','To analyse only controllable inputs while ignoring random variables in the model'],
+     correct:1,explanation:'Monte Carlo simulation replaces single values with probability distributions, generating random values to estimate how likely various outcomes are. It does not eliminate uncertainty — it quantifies uncertainty\'s impact on decisions.'},
+    {id:'q2_02',topicId:'t2_1',difficulty:'Easy',week:2,
+     question:'In Monte Carlo simulation, which of the following correctly defines a trial?',
+     options:['A pre-simulation step to detect and fix errors in the model','The final average output value produced after all 1,000 simulations are complete','A set of values for all random variables and the associated output measures for a single simulation run','A combined run of the best-case, base-case, and worst-case scenarios in a single pass'],
+     correct:2,explanation:'A trial is one complete simulation run: values are assigned to every random variable and the output (e.g. profit) is calculated. Monte Carlo repeats this 1,000+ times to build a distribution of outcomes.'},
+    {id:'q2_03',topicId:'t2_2',difficulty:'Moderate',week:2,
+     question:'Compared to Monte Carlo simulation, what is the fundamental limitation of what-if analysis (scenario analysis)?',
+     options:['What-if analysis cannot be performed in Excel without specialist add-ins','What-if analysis cannot indicate the likelihood of the various outcomes it produces','What-if analysis only works with discrete probability distributions','What-if analysis is incapable of computing expected values'],
+     correct:1,explanation:'What-if analysis shows a range of outcomes (best/base/worst) but gives no information about how likely each outcome is. Monte Carlo solves this by assigning probability distributions and counting how often outcomes occur.'},
+    {id:'q2_04',topicId:'t2_2',difficulty:'Moderate',week:2,
+     question:'In the Sanotronics LLC example, which values does the base-case scenario use?',
+     options:['The most pessimistic estimates of uncertain variables to project the worst possible outcome','The most optimistic estimates of uncertain variables to project the best possible outcome','The most likely estimates of uncertain variables to compute a baseline projection','The simple average of the minimum and maximum values for each uncertain variable'],
+     correct:2,explanation:'Base-case uses the most likely estimates → Profit = $710,000. Worst-case uses most pessimistic → −$1,000,000. Best-case uses most optimistic → $2,780,000.'},
+    {id:'q2_05',topicId:'t2_5',difficulty:'Moderate',week:4,
+     question:'A 1,000-trial simulation produces a 95% Probability Interval of [−$0.30M, $1.81M] and a 95% CI on the Mean of [$0.69M, $0.76M]. What does the 95% probability interval represent?',
+     options:['We are 95% confident that the true population mean profit lies within this range','95% of the 1,000 simulated individual profit observations fall within this range','The company is guaranteed to earn a profit within this range with 95% certainty','No profit values can fall outside this range'],
+     correct:1,explanation:'The 95% probability interval (from PERCENTILE.EXC at 2.5th and 97.5th percentiles) contains 95% of individual simulated outcomes. The CI on the Mean is narrower — it estimates where the true population average lies.'},
+    {id:'q2_06',topicId:'t2_5',difficulty:'Moderate',week:4,
+     question:'A 1,000-trial simulation produces a 95% CI on the mean profit of [$693K, $758K]. Which statement correctly interprets this interval?',
+     options:['95% of the 1,000 simulated profit values fall between $693K and $758K','We are 95% confident the true long-run average profit lies between $693K and $758K','The product will generate profit between $693K and $758K in 95% of future years','The simulation guarantees profit will never fall below $693K'],
+     correct:1,explanation:'The CI on the mean estimates where the true population average lies — not where individual outcomes fall. Individual outcome spread is captured by the probability interval (PERCENTILE.EXC at 2.5th and 97.5th). More trials narrow the CI; the probability interval stays wide because business risk does not shrink with more trials.'},
+    {id:'q2_07',topicId:'t2_4',difficulty:'Hard',week:5,
+     question:'In the Land Shark model, the number of competing bidders is equally likely to be any integer from 2 to 8. Which Excel formula is most appropriate?',
+     options:['=NORM.INV(RAND(), 5, 2)','=2 + (8−2) * RAND()','=RANDBETWEEN(2, 8)','=POISSON.DIST(5, 5, FALSE)'],
+     correct:2,explanation:'Integer Uniform: use RANDBETWEEN(2,8) when all integer values in a range are equally likely. Continuous Uniform would produce decimals like 2.7 — impossible for a count of bidders.'},
+    {id:'q2_08',topicId:'t2_5',difficulty:'Hard',week:4,
+     question:'Promus Corp simulation: Q=110 outperforms Q=90 in 746 of 1,000 trials; mean profit difference $858; 95% CI = [$809, $906]. Which conclusion is most appropriate?',
+     options:['Since the 95% CI does not contain zero, the profit difference is likely statistically significant and Q=110 appears to be the better policy','Since Q=110 only outperforms in 74.6% of trials, no definitive conclusion can be drawn','More simulation trials are needed before any statistically meaningful conclusion can be reached','The CI [$809, $906] does not contain zero but is too wide to be statistically significant'],
+     correct:0,explanation:'Key rule: if the 95% CI on the difference does not contain zero, the difference is statistically significant. CI = [$809, $906] excludes zero → Q=110 is the better policy.'},
+    {id:'q2_09',topicId:'t2_3',difficulty:'Easy',week:3,
+     question:'"A normal distribution has a limited range and can be skewed in either direction." Is this True or False?',
+     options:['True — the normal distribution is bounded by the mean ± three standard deviations','True — the normal distribution can be positively or negatively skewed depending on parameters','False — the normal distribution is symmetric and its range extends to both positive and negative infinity','False — the normal distribution only takes positive values'],
+     correct:2,explanation:'The normal distribution is always symmetric and bell-shaped. Its range is (−∞, +∞) with no hard boundaries. Distributions that can be skewed include Poisson, Exponential, and Triangular.'},
+    {id:'q2_10',topicId:'t2_8',difficulty:'Easy',week:4,
+     question:'"The larger the number of trials used in Monte Carlo simulation, the more precise the result." True or False?',
+     options:['False — precision is determined by the quality of distributions, not the number of trials','False — increasing trials beyond 1,000 has no effect on sampling error','True — more trials reduce sampling error, producing more precise estimates of means and confidence intervals','True — but only if all random variables follow a normal distribution'],
+     correct:2,explanation:'True. Monte Carlo is statistical sampling: standard error ∝ 1/√n. More trials give a more stable, precise result. The quiz uses 5,000 trials rather than 1,000 for this reason.'},
+    {id:'q2_11',topicId:'t2_6',difficulty:'Moderate',week:4,
+     question:'Galaxy Co. buys VR goggles for $150 and sells for $300. Stock Q=140, holding cost $20/unsold, shortage cost $40/unmet demand. Which formula correctly calculates monthly net profit?',
+     options:['= 300*MIN(D,140) − 150*140 − 20*MAX(140−D,0) − 40*MAX(D−140,0)','= 150*MIN(D,140) − 20*MAX(140−D,0) − 40*MAX(D−140,0)','= 150*D − 20*MAX(140−D,0) − 40*MAX(D−140,0)','= 300*MIN(D,140) − 20*MAX(140−D,0) − 40*MAX(D−140,0)'],
+     correct:1,explanation:'Gross profit per unit sold = $300 − $150 = $150. Formula: 150×min(D,Q) − 20×max(Q−D,0) − 40×max(D−Q,0). Option C uses D instead of min(D,Q), counting revenue on units never in stock.'},
+    {id:'q2_12',topicId:'t2_4',difficulty:'Moderate',week:3,
+     question:'A retailer observes that monthly demand is bell-shaped, with most observations close to 500 units and progressively fewer as values move further from the mean. Which distribution should be used?',
+     options:['Continuous Uniform — because all values between a minimum and maximum are possible','Discrete Uniform — because demand takes only whole numbers','Normal — because the data is bell-shaped and symmetric around a central mean','Triangular — because we have a minimum, maximum, and most likely value'],
+     correct:2,explanation:'Normal distribution is appropriate when data is symmetric and bell-shaped around a central mean. Use Triangular when you have expert estimates of min/mode/max but no data. Use Uniform when all values in a range are truly equally likely.'},
+    {id:'q2_13',topicId:'t2_4',difficulty:'Moderate',week:3,
+     question:'A procurement manager estimates supplier lead time is at least 3 days, most commonly 5 days, and never more than 10 days. Which distribution is most appropriate?',
+     options:['Normal distribution: =NORM.INV(RAND(), 5, 1.5)','Triangular distribution with minimum a=3, mode m=5, maximum b=10','Continuous Uniform: =3 + (10−3)*RAND()','Exponential distribution — for modelling time between events'],
+     correct:1,explanation:'When an expert specifies a minimum, most likely (mode), and maximum value but lacks detailed historical data, Triangular is the standard choice. Normal is unbounded; Uniform implies all values equally likely; Exponential models time between random arrivals.'},
+    {id:'q2_14',topicId:'t2_6',difficulty:'Moderate',week:5,
+     question:'In the PTW simulation, quarterly exchange rate changes for GBP, NZD, and JPY are historically correlated. Why should these NOT be generated independently?',
+     options:['Independent generation would require excessive computing resources in Excel','Generating them independently ignores their correlation, producing unrealistic combinations that do not reflect how currencies actually move together','Excel cannot generate more than one random variable per worksheet','Independent generation always overestimates total revenue risk'],
+     correct:1,explanation:'If exchange rates are historically correlated, independent generation produces trial combinations that never occur in reality. Solution: resample historical observations row-by-row using RANDBETWEEN + XLOOKUP, which preserves the real-world correlation structure.'},
+    {id:'q2_15',topicId:'t2_7',difficulty:'Moderate',week:4,
+     question:'After 1,000 simulation trials, profit values are in E27:E1026. Which formula correctly calculates the proportion of trials where profit exceeds $1,000,000?',
+     options:['=AVERAGE(E27:E1026 > 1000000)','=COUNTIF(E27:E1026,">1000000") / COUNT(E27:E1026)','=SUMIF(E27:E1026,">1000000") / 1000','=PERCENTILE.EXC(E27:E1026, 0.95)'],
+     correct:1,explanation:'=COUNTIF(range,">1000000") / COUNT(range). COUNTIF counts matching cells; dividing by COUNT gives the sample proportion. SUMIF adds the values (not count); PERCENTILE.EXC gives the 95th percentile value, not a proportion.'},
+    {id:'q2_16',topicId:'t2_8',difficulty:'Moderate',week:4,
+     question:'A simulation analyst reviews all Excel formulas to confirm they are mathematically correct and produce the right outputs for given inputs. Which quality assurance step is this?',
+     options:['Validation — ensuring the model accurately represents the real-world system','Sensitivity Analysis — testing how output changes when inputs are varied','Verification — ensuring the computer procedure performing the simulation is logically correct','Calibration — adjusting parameters to match observed historical outcomes'],
+     correct:2,explanation:'Verification: the model formulas are error-free and logically correct. Validation: the model accurately represents the real system. Both are necessary — a verified model can still be invalid if its assumptions are unrealistic.'},
+    {id:'q2_17',topicId:'t2_8',difficulty:'Easy',week:2,
+     question:'Which of the following is a primary advantage of Monte Carlo simulation over traditional mathematical models?',
+     options:['Simulation always guarantees the globally optimal solution for complex decision problems','Simulation is easy to understand and can model complex systems without the restrictive assumptions often required by mathematical models','Simulation completely eliminates uncertainty and produces exact predictions','Simulation requires no probability distribution inputs or historical data'],
+     correct:1,explanation:'Two primary advantages: (1) Easy to understand — results are intuitive for non-technical stakeholders. (2) Flexible — can model complex systems without simplifying assumptions required by analytical models. Simulation does not optimise or eliminate uncertainty.'},
+    {id:'q2_18',topicId:'t2_8',difficulty:'Moderate',week:4,
+     question:'In Excel\'s Data Table, why must a reference to an empty cell be entered as the Column input cell when running a Monte Carlo simulation?',
+     options:['To specify how many simulation trials the Data Table should execute','To force Excel to recalculate the workbook for each row, generating new RAND() values and therefore a fresh trial per row','To prevent the output formulas from referencing the random input cells','To lock the probability distributions to the base-case parameter values'],
+     correct:1,explanation:'The Data Table recalculates the workbook once for each row by substituting a value into the Column input cell. Using an empty cell means no formula input changes — but the recalculation still triggers new RAND() values, producing a unique set of random inputs for every trial. Without this recalculation trigger, all rows would return the same base-case output.'},
+    {id:'q2_19',topicId:'t2_4',difficulty:'Hard',week:5,
+     question:'In the Land Shark model, bid fractions can be generated by resampling 280 historical observations or by fitting a continuous distribution. What is the key advantage of fitting a continuous distribution?',
+     options:['A fitted distribution always produces more accurate results than resampling','A fitted distribution can generate values not in the original 280 observations, producing thousands of unique bid fractions that share the statistical characteristics of the historical data','Fitting a distribution is computationally much faster than resampling in Excel','A fitted distribution eliminates the need for any historical data'],
+     correct:1,explanation:'Resampling: draws only from the 280 observed values. Fitted continuous distribution: generates values across the full range including values between historical observations. Neither is universally better — both should be tested.'},
+    {id:'q2_20',topicId:'t2_5',difficulty:'Hard',week:4,
+     question:'A simulation shows mean profit $0.726M, 95% CI on mean [$0.693M, $0.758M], and P(loss) = 8.9%. A manager states: "Since the CI excludes zero, the product launch will definitely be profitable." Is this correct?',
+     options:['Correct — a CI that excludes zero is sufficient to guarantee profitability','Incorrect — the CI describes the average outcome, not individual outcomes. With 8.9% probability of loss, there remains a meaningful chance of loss in any given year','Correct — the 8.9% loss probability is negligible for practical business decisions','Incorrect — at least 10,000 trials are required before drawing any conclusions'],
+     correct:1,explanation:'The CI on the mean confirms the expected average profit is positive — it does NOT mean every year will be profitable. P(loss) = 8.9% means roughly 1 in 11 years results in a loss, which is materially significant in many business contexts.'},
+    {id:'q2_21',topicId:'t2_3',difficulty:'Moderate',week:3,
+     question:'A hospital emergency department receives an average of 8 patient arrivals per hour. Which distribution models the number of arrivals in any given hour?',
+     options:['Normal — because the mean is known and the count is roughly bell-shaped','Exponential — because it models rates of occurrence over time','Poisson — because it models the count of events in a fixed interval when the average rate is known','Continuous Uniform — because arrivals are spread evenly across the hour'],
+     correct:2,explanation:'Poisson models the count of events in a fixed time/space interval with known average rate λ. Excel: =POISSON.DIST(x, lambda, FALSE/TRUE). Exponential models time BETWEEN arrivals, not the count.'},
+    {id:'q2_22',topicId:'t2_3',difficulty:'Moderate',week:3,
+     question:'A machine breaks down on average once every 200 hours. A simulation needs to generate the time until the next breakdown. Which distribution is most appropriate?',
+     options:['Poisson — because breakdowns are random events over time','Normal — because the mean time is known','Exponential — because it models the time between randomly occurring events','Triangular — because we can estimate a minimum and maximum operating time'],
+     correct:2,explanation:'Exponential models time between events in a Poisson process. Mean = 1/λ = 200 hours so λ = 0.005. Key property: memoryless — past operating time does not affect the probability of future breakdown. Excel: =EXPON.DIST(x, lambda, FALSE/TRUE).'},
+    {id:'q2_23',topicId:'t2_3',difficulty:'Moderate',week:3,
+     question:'A sales team closes 30% of all client pitches. In a month with 20 pitches, which distribution models the number of successful deals?',
+     options:['Poisson — because successful sales are events occurring over time','Normal — because the expected value (6 sales) is known','Continuous Uniform — because any number from 0 to 20 is possible','Binomial — because it models the number of successes in a fixed number of independent trials'],
+     correct:3,explanation:'Binomial models the number of successes in n independent trials each with probability p. Here n=20, p=0.30, E(X)=6. Excel: =BINOM.DIST(x, 20, 0.30, FALSE). Poisson has no fixed number of trials.'},
+    {id:'q2_24',topicId:'t2_8',difficulty:'Moderate',week:2,
+     question:'Which of the following is a recognised limitation/disadvantage of Monte Carlo simulation?',
+     options:['Simulation can only handle a maximum of three uncertain variables at once','Simulation does not produce an optimal solution — it evaluates given alternatives but cannot automatically find the best one','Simulation requires all input variables to follow a normal distribution','Simulation results cannot be used to estimate probabilities of specific outcomes'],
+     correct:1,explanation:'A key limitation: simulation is not an optimisation tool. You must specify each alternative and run separately — it will not search all possible values to find the best option automatically. Other disadvantages: time-consuming to build; results are estimates with sampling error.'},
+    {id:'q2_25',topicId:'t2_4',difficulty:'Moderate',week:5,
+     question:'A project manager has 3 years of weekly delivery delay data and plans to sample directly from historical values rather than fitting a distribution. What is this approach called, and which Excel functions support it?',
+     options:['Parametric bootstrapping — supported by NORM.INV and RAND()','Theoretical distribution fitting — supported by POISSON.DIST and EXPON.DIST','Empirical (historical data) distribution — supported by RANDBETWEEN and XLOOKUP to resample rows','Sensitivity analysis — supported by Data Table and What-If Analysis'],
+     correct:2,explanation:'Empirical distribution: use =XLOOKUP(RANDBETWEEN(1,n), row_index, data_column) to sample a random historical row. Advantage: preserves actual data shape. Limitation: can only generate values that exist in the dataset.'},
+    {id:'q2_26',topicId:'t2_7',difficulty:'Moderate',week:4,
+     question:'After 1,000 trials, profit values are in E27:E1026. Which formula pair correctly calculates the 95% probability interval?',
+     options:['Lower: =NORM.INV(0.025, AVERAGE(E27:E1026), STDEV(E27:E1026)) / Upper: =NORM.INV(0.975, ...)','Lower: =PERCENTILE.EXC(E27:E1026, 0.025) / Upper: =PERCENTILE.EXC(E27:E1026, 0.975)','Lower: =CONFIDENCE.T(0.05, STDEV(E27:E1026), 1000) / Upper: =AVERAGE + CONFIDENCE.T(...)','Lower: =MIN(E27:E1026) / Upper: =MAX(E27:E1026)'],
+     correct:1,explanation:'PERCENTILE.EXC(range, 0.025) gives the 2.5th percentile (lower bound) and PERCENTILE.EXC(range, 0.975) gives the 97.5th percentile (upper bound), capturing the middle 95% of simulated outcomes. CONFIDENCE.T gives the CI on the mean, not a probability interval.'},
+    {id:'q2_27',topicId:'t2_5',difficulty:'Hard',week:4,
+     question:'A simulation gives a 95% Probability Interval of [−$0.30M, $1.81M] (width $2.11M) and a 95% CI on the Mean of [$0.69M, $0.76M] (width $0.07M). Why is the CI on the mean so much narrower?',
+     options:['The CI on the mean uses a 99% confidence level while the probability interval uses 95%','The CI on the mean measures how precisely we know the average; its width shrinks as n increases. The probability interval measures natural outcome variability, which does not shrink with more trials','The CI on the mean only includes profitable trials, making it narrower','The probability interval is wider because it adds a penalty for skewed data'],
+     correct:1,explanation:'CI on Mean: based on SE = σ/√n. With 1,000 trials the SE is small, so the CI is tight. More trials narrows it further. Probability Interval: based on percentiles of individual outcomes — reflects genuine business risk. Its width reflects real variability, not estimation error.'},
+    {id:'q2_28',topicId:'t2_4',difficulty:'Easy',week:3,
+     question:'Weekly coffee shop revenue varies between $8,000 and $14,000. Years of records show all values in this range occur with roughly equal frequency — no value is more common than any other. Which distribution is appropriate?',
+     options:['Normal — because the range is symmetric around $11,000','Triangular — because we know the minimum, most likely value, and maximum','Continuous Uniform — because all values in the range are equally likely','Poisson — because revenue is measured over a fixed time period'],
+     correct:2,explanation:'Continuous Uniform is appropriate when all values within a range are equally probable. Formula: =8000 + (14000−8000)*RAND(). Normal is bell-shaped (more values near centre). Triangular requires a mode — but the description says no value is more common.'},
+    {id:'q2_29',topicId:'t2_8',difficulty:'Moderate',week:4,
+     question:'After a baseline simulation, an analyst changes one uncertain input\'s distribution (keeping all others fixed) and re-runs to observe the impact on output variability. What technique is this?',
+     options:['Validation — checking that the model accurately represents the real system','Verification — confirming the model formulas are logically correct','Sensitivity analysis — testing how changes to one input assumption affect the output','Bootstrapping — resampling from historical data to generate new distributions'],
+     correct:2,explanation:'Sensitivity analysis in simulation: deliberately change one input distribution, hold all others constant, observe the output change. Purpose: identify which uncertain inputs have the greatest influence on results, guiding data collection priorities.'},
+    {id:'q2_30',topicId:'t2_5',difficulty:'Hard',week:4,
+     question:'Why does increasing the number of simulation trials improve the precision of the mean estimate but NOT reduce the width of the probability interval?',
+     options:['The probability interval uses a different confidence level than the CI on the mean','The CI on the mean is based on standard error (σ/√n) which shrinks as n grows; the probability interval reflects natural outcome variability which stays constant regardless of sample size','More trials only improve mock exam mode results, not practice mode','The probability interval automatically adjusts to match the CI on the mean once enough trials are run'],
+     correct:1,explanation:'SE = σ/√n shrinks as n increases → CI on the mean narrows. The probability interval (2.5th to 97.5th percentile) reflects the real spread of business outcomes — that variability is a property of the real world, not the sample size. More trials make your estimate of that spread more stable, but the interval itself stays wide.'}
+  ]
+};
+
+const quiz2MockPool = [
+  // ── Monte Carlo Fundamentals (t2_1) ──────────────────────────────────────
+  {id:'m01',topicId:'t2_1',difficulty:'Moderate',week:2,
+   question:'What is the fundamental difference between a deterministic spreadsheet model and a Monte Carlo simulation model?',
+   options:['Deterministic models use Excel; Monte Carlo requires specialist software','Deterministic models assign fixed values to uncertain parameters; Monte Carlo replaces them with probability distributions','Monte Carlo always produces a single output number; deterministic models produce a range','Deterministic models can only handle linear relationships'],
+   correct:1,explanation:'A deterministic model uses one fixed value per input and produces one output. Monte Carlo assigns distributions to uncertain inputs and samples them repeatedly, producing a distribution of possible outcomes.'},
+  {id:'m02',topicId:'t2_1',difficulty:'Moderate',week:2,
+   question:'Monte Carlo simulation is LEAST suited for which of the following tasks?',
+   options:['Estimating the probability that a new product launch is profitable','Finding the exact optimal price that maximises expected revenue','Quantifying the range of possible NPVs for a capital project','Assessing how sensitive profit is to uncertainty in demand'],
+   correct:1,explanation:'Simulation evaluates given alternatives — it does not optimise. Finding the optimal price requires an optimisation model (e.g. solver/LP). Simulation answers "what is the distribution of outcomes for this price?" not "which price is best?"'},
+  {id:'m03',topicId:'t2_1',difficulty:'Easy',week:2,
+   question:'A manager reports "our base-case forecast shows $2M profit." What key information does this NOT provide?',
+   options:['The expected profit under normal conditions','The probability of achieving at least $2M in profit','The most likely estimate of profit','A baseline for comparison with best and worst cases'],
+   correct:1,explanation:'A base-case gives one point estimate under most-likely conditions. It provides no information about how likely that outcome is, or how often profit might fall short. Monte Carlo fills this gap.'},
+  {id:'m04',topicId:'t2_1',difficulty:'Moderate',week:2,
+   question:'In Monte Carlo simulation, "sampling error" refers to:',
+   options:['Errors from using incorrect probability distributions','Differences caused by model mis-specification','Statistical variation in results caused by using a finite number of random trials','Mistakes made when entering data into Excel'],
+   correct:2,explanation:'Sampling error is the natural variation in estimates caused by using a finite (not infinite) number of random trials. It shrinks as the number of trials increases, following SE ∝ 1/√n.'},
+  {id:'m05',topicId:'t2_1',difficulty:'Easy',week:2,
+   question:'Why does a Monte Carlo simulation produce different results every time F9 is pressed in Excel?',
+   options:['The model contains errors that change with each recalculation','Each recalculation generates new RAND() values, producing a new set of random inputs and therefore a new output distribution','Excel\'s floating point arithmetic introduces rounding errors','The SUMPRODUCT function recalculates automatically on workbook refresh'],
+   correct:1,explanation:'Every RAND() call generates a new random number between 0 and 1, feeding into the inverse CDF functions to produce new random variable values. This is by design — simulation needs fresh random samples each run.'},
+  {id:'m06',topicId:'t2_1',difficulty:'Moderate',week:2,
+   question:'What distinguishes a stochastic model from a deterministic model?',
+   options:['Stochastic models are built in Excel; deterministic models require programming languages','Stochastic models include random variables with probability distributions; deterministic models use fixed parameter values','Stochastic models always produce worse forecasts than deterministic models','Deterministic models handle more uncertain variables than stochastic models'],
+   correct:1,explanation:'A stochastic model treats one or more inputs as random variables with probability distributions. A deterministic model uses a single fixed value for every parameter. Monte Carlo simulation is a stochastic modelling approach.'},
+  {id:'m07',topicId:'t2_1',difficulty:'Easy',week:2,
+   question:'Why is Monte Carlo described as "easy to understand" compared to analytical mathematical models?',
+   options:['Monte Carlo always requires fewer assumptions than mathematical models','The output is a distribution of outcomes that non-technical stakeholders can intuitively interpret','Monte Carlo models require no statistical knowledge to build','Mathematical models cannot produce probability estimates'],
+   correct:1,explanation:'One of Monte Carlo\'s two primary advantages (per the lecture): results are expressed as histograms, probability intervals, and CI — intuitive for managers. The second advantage is flexibility to model complex systems without restrictive assumptions.'},
+  {id:'m08',topicId:'t2_1',difficulty:'Moderate',week:2,
+   question:'Comparing 500 trials vs 5,000 trials in a Monte Carlo simulation, which statement is correct?',
+   options:['5,000 trials always gives a different mean than 500 trials','5,000 trials produces more stable estimates with smaller standard errors, but requires more computation time','Using more than 1,000 trials violates the assumptions of Monte Carlo simulation','Results from 5,000 trials are always more accurate regardless of distribution choice'],
+   correct:1,explanation:'More trials reduce sampling error (SE ∝ 1/√n), making mean estimates, CIs, and probability estimates more stable. There is no theoretical upper limit — the trade-off is computation time, which is trivial for modern computers.'},
+  // ── What-If & Scenario Analysis (t2_2) ───────────────────────────────────
+  {id:'m09',topicId:'t2_2',difficulty:'Easy',week:2,
+   question:'In what-if analysis, what is the "worst-case scenario"?',
+   options:['The scenario most likely to occur based on historical data','A scenario using the most pessimistic estimates for all uncertain variables simultaneously','The scenario with the highest standard deviation across variables','The scenario that assumes all risks materialise sequentially over time'],
+   correct:1,explanation:'Worst-case uses the most pessimistic estimate for every uncertain variable at once. This typically gives an extreme lower bound on outcomes. In the Sanotronics example, this yields a loss of $1,000,000.'},
+  {id:'m10',topicId:'t2_2',difficulty:'Moderate',week:2,
+   question:'A company evaluates three scenarios: best-case profit $5M, base-case $1M, worst-case −$2M. What CANNOT be determined from these three scenarios alone?',
+   options:['The range of possible profit outcomes','The probability that the product will be profitable','The profit under the most likely conditions','The profit difference between best and worst cases'],
+   correct:1,explanation:'Scenario analysis shows what COULD happen but not how LIKELY each outcome is. To know the probability of being profitable, you need Monte Carlo simulation with probability distributions assigned to the uncertain inputs.'},
+  {id:'m11',topicId:'t2_2',difficulty:'Moderate',week:2,
+   question:'Why might a base-case profit of $500K be misleading for a major investment decision?',
+   options:['The base-case always underestimates the true expected profit','The base-case uses the most likely inputs but ignores the probability and magnitude of downside scenarios — it provides no information about risk','$500K is too small to be a meaningful base-case for most businesses','The base-case is calculated using average values, which is statistically biased'],
+   correct:1,explanation:'The base-case shows the most likely outcome but not the risk. A project with base-case $500K could have a 40% chance of a large loss — information that only Monte Carlo simulation reveals.'},
+  {id:'m12',topicId:'t2_2',difficulty:'Moderate',week:2,
+   question:'Scenario analysis and Monte Carlo simulation are both used to evaluate uncertainty. Which statement describes a key difference?',
+   options:['Both methods assign probability distributions to uncertain variables','Only Monte Carlo provides information about the probability of each outcome','Both always produce the same mean profit estimate','Both require Excel\'s Data Table functionality to execute'],
+   correct:1,explanation:'This is the fundamental gap scenario analysis cannot fill: it shows a range of outcomes but cannot assign probabilities. Monte Carlo assigns distributions to inputs and counts how often outcomes occur, producing probability estimates.'},
+  // ── Probability Distributions (t2_3) ─────────────────────────────────────
+  {id:'m13',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'A continuous uniform distribution on [60, 90]. What is the mean of this distribution?',
+   options:['60','75','90','It depends on the specific RAND() value used'],
+   correct:1,explanation:'Mean of Continuous Uniform = (a + b)/2 = (60 + 90)/2 = 75. The mean is always the midpoint of the range, regardless of the RAND() value generated.'},
+  {id:'m14',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'For a Poisson distribution with mean λ = 4, what is the variance?',
+   options:['2 (the square root of 4)','4 (mean = variance for Poisson)','16 (mean squared)','It depends on the number of intervals observed'],
+   correct:1,explanation:'A key property of the Poisson distribution: mean = variance = λ. This is unique to Poisson and useful for checking whether a count variable follows a Poisson process (if observed mean ≈ variance, Poisson may be appropriate).'},
+  {id:'m15',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'Which is a key characteristic that distinguishes the Exponential distribution from others?',
+   options:['It is symmetric around its mean','It is bounded by fixed minimum and maximum values','It has the memoryless property — past elapsed time does not affect the probability of the next event','Its mean and variance are always equal'],
+   correct:2,explanation:'Memoryless: P(T > s+t | T > s) = P(T > t). If a machine has been running 100 hours without failure, the probability of failure in the next 10 hours is identical to the probability at startup. This property is unique to the Exponential.'},
+  {id:'m16',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'Which of the following best describes a situation for the Binomial distribution?',
+   options:['The number of emails arriving per hour given an average arrival rate','The time between machine failures in a manufacturing process','The number of customers who return a product out of 500 purchases, given a 5% return rate','Daily revenue from a store which varies symmetrically around an average'],
+   correct:2,explanation:'Binomial: n independent trials, each with success probability p, counting the total successes. Here n=500 customers, p=0.05 return rate. The expected returns = np = 25. Use =BINOM.DIST(x, 500, 0.05, FALSE/TRUE).'},
+  {id:'m17',topicId:'t2_3',difficulty:'Easy',week:3,
+   question:'For a Normal distribution N(μ, σ), approximately what percentage of values fall within one standard deviation of the mean?',
+   options:['50%','68%','95%','99.7%'],
+   correct:1,explanation:'The 68-95-99.7 rule: ≈68% within ±1σ, ≈95% within ±2σ, ≈99.7% within ±3σ. This is one of the most important properties of the normal distribution for interpreting simulation output.'},
+  {id:'m18',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'A dataset of stock returns shows "fat tails" compared to a normal distribution. What does this mean for risk assessment?',
+   options:['Extreme outcomes are less likely than the normal distribution predicts','The distribution is positively skewed','Large gains or losses occur more frequently than a normal distribution would predict','The distribution should be replaced with a uniform distribution'],
+   correct:2,explanation:'Fat tails (excess kurtosis) mean extreme values are more probable than a normal distribution suggests. Using normal for fat-tailed data underestimates tail risk — a key issue in financial modelling (e.g. gas price % changes in the lecture).'},
+  {id:'m19',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'Which distribution would be most appropriate for modelling "the number of goals scored in a football match" given a known average goals-per-match rate?',
+   options:['Normal — because scoring is approximately bell-shaped','Binomial — because each minute is an independent trial','Poisson — because it models the count of events in a fixed time interval with a known average rate','Exponential — because it models random occurrence over time'],
+   correct:2,explanation:'Poisson models event counts in a fixed interval given average rate λ. Goals scored per match fits perfectly: λ = average goals per match, values are non-negative integers. Exponential would model time BETWEEN goals.'},
+  {id:'m20',topicId:'t2_3',difficulty:'Easy',week:3,
+   question:'What property must ALL valid probability distributions satisfy?',
+   options:['All individual probabilities must be equal (uniform)','All probabilities f(x) ≥ 0 AND the sum (or integral) of all probabilities = 1','All probabilities must be between 0.01 and 0.99','The mean must equal the median'],
+   correct:1,explanation:'Two conditions: (1) f(x) ≥ 0 for all x — no negative probabilities. (2) Σf(x) = 1 (discrete) or ∫f(x)dx = 1 (continuous) — total probability = 100%. Any distribution violating either condition is invalid.'},
+  {id:'m21',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'Which of the following is FALSE about the Normal distribution?',
+   options:['It is symmetric and bell-shaped around its mean','Its theoretical range extends from −∞ to +∞','It can be skewed left or right by adjusting its parameters','Approximately 95% of values lie within two standard deviations of the mean'],
+   correct:2,explanation:'The Normal distribution is ALWAYS symmetric — it cannot be skewed. You cannot make it skewed by adjusting μ or σ. Distributions that CAN be skewed include Poisson, Exponential, and Triangular (when mode ≠ midpoint).'},
+  {id:'m22',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'Which statement about the Triangular distribution is FALSE?',
+   options:['It requires three parameters: minimum, mode, and maximum','It can be skewed left or right depending on the position of the mode','It is bounded — values cannot fall outside [min, max]','It is the most mathematically rigorous distribution and should always be preferred over Normal'],
+   correct:3,explanation:'No distribution is universally "most rigorous." Triangular is a pragmatic choice when only min/mode/max are known. Normal is better when data is genuinely bell-shaped with historical support. The choice depends on data characteristics.'},
+  {id:'m23',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'For a Binomial distribution B(n, p), which formula gives the mean and variance?',
+   options:['Mean = p, Variance = np(1−p)','Mean = np, Variance = np(1−p)','Mean = np, Variance = np²','Mean = n/p, Variance = n(1−p)/p²'],
+   correct:1,explanation:'Binomial: Mean = np (expected successes), Variance = np(1−p). Example: n=20 pitches, p=0.30 → Mean = 6 deals, Variance = 20×0.3×0.7 = 4.2, SD ≈ 2.05.'},
+  {id:'m24',topicId:'t2_3',difficulty:'Moderate',week:3,
+   question:'Which distribution has a probability density function that continuously decreases from its maximum value at x = 0?',
+   options:['Normal distribution','Triangular distribution with mode at its minimum','Exponential distribution','Binomial distribution'],
+   correct:2,explanation:'The Exponential PDF = λe^(−λx) is highest at x=0 and decreases continuously. This reflects the "most likely time between events is very short." It models scenarios where events are most likely to happen soon after the last event.'},
+  // ── Choosing a Distribution (t2_4) ───────────────────────────────────────
+  {id:'m25',topicId:'t2_4',difficulty:'Moderate',week:3,
+   question:'A consultant estimates a project will cost between $80K and $150K, most likely $100K. Which distribution should be used?',
+   options:['Normal distribution centred on $100K','Continuous Uniform between $80K and $150K','Triangular with minimum $80K, mode $100K, maximum $150K','Binomial with n=150,000'],
+   correct:2,explanation:'When an expert provides min/mode/max but has no detailed historical data, Triangular is the standard choice. Uniform implies $80K and $150K are as likely as $100K — contradicting "most likely $100K."'},
+  {id:'m26',topicId:'t2_4',difficulty:'Moderate',week:5,
+   question:'In the Land Shark model, why is Triangular preferred over Normal for competitor bid fractions?',
+   options:['Triangular always gives lower bid estimates','Normal is unbounded — it could theoretically generate negative bid fractions or fractions above 1.0, which are impossible','Excel cannot generate Normal distribution values without add-ins','Triangular always fits historical data better than Normal'],
+   correct:1,explanation:'Bid fractions must lie in a physically realistic range (e.g. 0.645 to 0.986 in the example). Normal is theoretically unbounded (−∞, +∞), which can generate impossible values. Triangular enforces hard boundaries.'},
+  {id:'m27',topicId:'t2_4',difficulty:'Moderate',week:3,
+   question:'An analyst uses RANDBETWEEN(1, 10) to model a continuous variable ranging from 1 to 10. What is the problem?',
+   options:['RANDBETWEEN cannot accept 1 as a lower bound','RANDBETWEEN produces only integers — values like 3.7 or 8.2 cannot be generated. It is only appropriate for discrete uniform variables','RANDBETWEEN always generates values with equal probability, which is never realistic','There is no problem — RANDBETWEEN is the correct function for any uniform distribution'],
+   correct:1,explanation:'RANDBETWEEN(a,b) returns random integers only. For a continuous variable, use =a + (b−a)*RAND(). The two functions serve different purposes: RANDBETWEEN for counts (e.g. number of bidders), RAND() formula for continuous values.'},
+  {id:'m28',topicId:'t2_4',difficulty:'Moderate',week:5,
+   question:'What characteristics of historical data would lead you to choose empirical resampling over a theoretical distribution?',
+   options:['The data perfectly follows a known distribution like Normal or Exponential','You have fewer than 5 historical observations','You have a large, representative dataset and the data does not fit any standard distribution well','You need to generate values outside the observed historical range'],
+   correct:2,explanation:'Empirical resampling is best when: (1) sufficient historical data exists, and (2) the data shape doesn\'t match known theoretical distributions (e.g. fat tails, multimodal). With only 5 observations, a fitted distribution may extrapolate better.'},
+  {id:'m29',topicId:'t2_4',difficulty:'Moderate',week:3,
+   question:'A quality engineer models "time between machine failures," average = 200 hours, no seasonality. Which distribution is most appropriate?',
+   options:['Normal(200, 50)','Triangular with min=0, mode=200, max=400','Exponential with mean=200 hours (λ=1/200)','Continuous Uniform between 0 and 400'],
+   correct:2,explanation:'Time between events in a random (Poisson) process follows an Exponential distribution. Mean = 1/λ = 200 hours. Key: the Exponential is the natural model for "time until next random event" across many engineering and service applications.'},
+  {id:'m30',topicId:'t2_4',difficulty:'Hard',week:3,
+   question:'Which combination of distribution and use case is INCORRECTLY matched?',
+   options:['Poisson → number of defects per unit of product','Binomial → number of successful sales calls out of 50 attempts','Exponential → time until the next customer arrival','Normal → number of patients arriving at an ER per hour'],
+   correct:3,explanation:'Patient arrivals per hour is a count with known average rate → Poisson, not Normal. Normal is appropriate for continuous variables that are approximately symmetric (e.g. height, measurement error). Counting arrivals per period is a classic Poisson use case.'},
+  {id:'m31',topicId:'t2_4',difficulty:'Moderate',week:3,
+   question:'What information is sufficient to FULLY specify a Triangular distribution?',
+   options:['Mean and standard deviation only','Minimum, maximum, and mode (most likely value)','Minimum and maximum only (mode is inferred as the midpoint)','Mean, standard deviation, and skewness'],
+   correct:1,explanation:'Triangular requires exactly three parameters: a (minimum), m (mode), b (maximum). Unlike Normal which uses mean and SD, Triangular uses three boundary/shape values. It is often used when only expert judgment — not historical data — is available.'},
+  {id:'m32',topicId:'t2_4',difficulty:'Moderate',week:3,
+   question:'A continuous uniform distribution generates values between 20 and 80. What is the probability that a randomly generated value exceeds 65?',
+   options:['25%','33%','65%','15%'],
+   correct:0,explanation:'For Uniform(a,b): P(X > x) = (b−x)/(b−a) = (80−65)/(80−20) = 15/60 = 0.25 = 25%. All values in the range are equally likely, so the probability is simply the proportion of the range above 65.'},
+  // ── Simulation Output & CI (t2_5) ─────────────────────────────────────────
+  {id:'m33',topicId:'t2_5',difficulty:'Moderate',week:4,
+   question:'A simulation produces a 95% probability interval of [$200K, $1.8M] and a mean of $900K. A manager claims "the company will make between $200K and $1.8M." What is wrong?',
+   options:['Nothing — the probability interval means exactly this','The interval contains only 95% of outcomes — 5% of trials fall outside this range, so extreme losses or gains remain possible','The manager should have used the CI on the mean instead','The probability interval is not a valid statistical measure'],
+   correct:1,explanation:'The 95% probability interval contains the middle 95% of simulated outcomes. 5% of trials fall outside — some below $200K (potential losses) and some above $1.8M. The manager\'s statement implies a hard guarantee, which the interval does not provide.'},
+  {id:'m34',topicId:'t2_5',difficulty:'Moderate',week:4,
+   question:'What does a 95% CI on the mean NOT tell you about simulation results?',
+   options:['How precisely the simulation has estimated the true average','Whether the mean result is likely to be statistically significant','The range within which most individual simulation outcomes fall','How much the mean estimate would vary if the simulation were re-run'],
+   correct:2,explanation:'The CI on the mean captures where the true average lies (precision of estimation). The range of individual outcomes is captured by the probability interval (PERCENTILE.EXC at 2.5th/97.5th). Confusing these two is the most common output interpretation error.'},
+  {id:'m35',topicId:'t2_5',difficulty:'Hard',week:4,
+   question:'In a simulation comparing Policy A vs Policy B, the 95% CI on the mean difference is [−$200, $300]. What can you conclude?',
+   options:['Policy B is better because it has a positive upper bound','Policy A is better because the lower bound is negative','No statistically significant difference — the CI contains zero, so the evidence does not clearly favour either policy','The simulation needs more trials before any conclusion can be drawn'],
+   correct:2,explanation:'Key rule: if the 95% CI on the DIFFERENCE contains zero, there is no statistically significant difference. The observed mean difference could easily be due to sampling variation. More trials would help narrow the CI, but the current evidence is inconclusive.'},
+  {id:'m36',topicId:'t2_5',difficulty:'Moderate',week:4,
+   question:'After running 5,000 trials, the CI on the mean profit is very narrow: [$998, $1,002]. What does this indicate?',
+   options:['The model has very low uncertainty in its inputs','The mean has been estimated precisely, but individual outcomes may still vary widely — the probability interval could still be very wide','The product will definitely generate profit between $998 and $1,002','More trials are still needed for a reliable result'],
+   correct:1,explanation:'A narrow CI on the mean reflects high PRECISION in estimating the average — not low risk. The probability interval (reflecting actual outcome variability) could still span a wide range. These are two completely separate things.'},
+  {id:'m37',topicId:'t2_5',difficulty:'Moderate',week:4,
+   question:'A simulation is re-run multiple times (F9). The mean profit fluctuates between $840K and $960K. What would most reduce this fluctuation?',
+   options:['Using a different probability distribution for the uncertain inputs','Increasing the number of simulation trials (e.g., from 1,000 to 5,000)','Changing the discount rate in the NPV calculation','Removing the least important uncertain variable from the model'],
+   correct:1,explanation:'Fluctuation between runs is sampling error. SE ∝ 1/√n — increasing trials reduces SE and stabilises the mean estimate. Going from 1,000 to 5,000 trials reduces SE by √5 ≈ 2.24×, significantly stabilising results.'},
+  {id:'m38',topicId:'t2_5',difficulty:'Moderate',week:4,
+   question:'P(Hybrid savings > $2,000) = 0.043. The 95% CI on this proportion is [0.030, 0.056]. What can you conclude?',
+   options:['With more trials the probability would rise above 0.10','Even in the most optimistic interpretation, saving more than $2,000 is unlikely — the entire CI lies well below 10%','The probability estimate is too imprecise to draw any conclusion','A 4.3% probability means hybrid is equally as good as non-hybrid'],
+   correct:1,explanation:'The CI [0.030, 0.056] shows the estimate is reasonably precise. Even the upper bound (5.6%) is very low. The conclusion is robust: regardless of sampling uncertainty, significant savings above $2,000 are uncommon under these assumptions.'},
+  {id:'m39',topicId:'t2_5',difficulty:'Hard',week:4,
+   question:'What is the correct formula for the standard error of a proportion p̂ estimated from n simulation trials?',
+   options:['=SQRT(p̂ × (1−p̂) / n)','=SQRT(p̂ / n)','=p̂ / SQRT(n)','=STDEV(output_range) / n'],
+   correct:0,explanation:'SE of proportion = √(p̂(1−p̂)/n). This is derived from the Binomial distribution approximated by Normal for large n. Example: p̂=0.089, n=1000 → SE = √(0.089×0.911/1000) = √0.0000811 ≈ 0.009.'},
+  {id:'m40',topicId:'t2_5',difficulty:'Moderate',week:4,
+   question:'What does a VERY WIDE 95% probability interval in simulation results imply about a business decision?',
+   options:['The simulation model contains errors and should be rebuilt','There is high uncertainty in the outcome — the range of possible results is large, increasing decision risk','The probability distributions are too narrow and should be widened','A wider interval is always better because it captures more possible outcomes'],
+   correct:1,explanation:'A wide probability interval directly reflects high outcome uncertainty. This is valuable information: it tells decision-makers the risk is high and more information (e.g., better demand data, hedging strategies) may be worth pursuing before committing.'},
+  // ── Model Design & Structure (t2_6) ──────────────────────────────────────
+  {id:'m41',topicId:'t2_6',difficulty:'Moderate',week:4,
+   question:'In a multi-year simulation, why is Year 2 gas price modelled as =G18*(1+H18) rather than independently sampling a new price?',
+   options:['To ensure gas price always increases over time','Because gas prices in consecutive years are strongly correlated (r=0.88) — absolute price persists year-to-year even though annual % changes are approximately independent','To reduce the number of random variables in the model','Excel requires sequential cell references for multi-year calculations'],
+   correct:1,explanation:'Raw gas prices are autocorrelated (r=0.88): if price is high this year, it tends to be high next year. The model captures this by multiplying the previous year\'s price by (1 + random % change), where the % change is independently sampled.'},
+  {id:'m42',topicId:'t2_6',difficulty:'Moderate',week:4,
+   question:'In the Promus inventory model, the shortage cost formula uses =MAX(D−Q, 0). What happens when demand (D) equals exactly stock quantity (Q)?',
+   options:['It returns Q (the full stock level)','It returns a negative number equal to D−Q','It returns 0 — there is neither a shortage nor leftover stock','It returns 1 because demand equals supply'],
+   correct:2,explanation:'MAX(D−Q, 0): when D=Q, D−Q=0, and MAX(0,0)=0. There is no shortage (all demand is met) and no leftover (all stock is sold). Profit = gross margin on all Q units, with no holding or shortage costs.'},
+  {id:'m43',topicId:'t2_6',difficulty:'Moderate',week:4,
+   question:'Why is the NPV function used for multi-year cost comparisons rather than simply summing annual costs?',
+   options:['NPV automatically adjusts for inflation','NPV discounts future cash flows to present value, reflecting the time value of money — a dollar today is worth more than a dollar in the future','Simple summation would double-count Year 1 costs','Excel\'s SUM function cannot handle negative values in cost calculations'],
+   correct:1,explanation:'$1 received in Year 10 is worth less than $1 today because money can be invested in the meantime. NPV discounts each year\'s cash flow by (1+r)^t. Comparing NPVs gives a fair, like-for-like comparison across options with different timing.'},
+  {id:'m44',topicId:'t2_6',difficulty:'Moderate',week:4,
+   question:'In the Galaxy Co. inventory model, what does =MIN(D, Q) represent?',
+   options:['The minimum possible demand in the simulation','Units actually sold — constrained by both what customers want (D) and what is in stock (Q)','Leftover inventory after all possible sales','Total units ordered from the supplier'],
+   correct:1,explanation:'You can only sell what you have in stock AND what customers want. MIN(D,Q) takes the smaller of the two: if D>Q, you sell Q (stock runs out); if D<Q, you sell D (some stock remains unsold). This is the key constraint in any inventory model.'},
+  {id:'m45',topicId:'t2_6',difficulty:'Moderate',week:4,
+   question:'In a simulation model, why must the Year 0 purchase price be EXCLUDED from the NPV function and instead added separately?',
+   options:['Excel\'s NPV function cannot handle negative numbers','The NPV function discounts from Year 1 onwards — Year 0 cash flows are already in present value terms and need no discounting','The purchase price is a fixed cost treated differently from variable costs','Adding it inside NPV would create a circular reference'],
+   correct:1,explanation:'Excel\'s NPV(rate, CF1, CF2, ...) function assumes the first value (CF1) occurs at the END of Period 1. Year 0 cash flows occur NOW and are already at present value — including them inside NPV would incorrectly discount them.'},
+  {id:'m46',topicId:'t2_6',difficulty:'Moderate',week:4,
+   question:'In the outsourcing model comparing in-house manufacturing vs. buying from a supplier, when is the "Make" decision optimal for a given trial?',
+   options:['Always when fixed costs are high relative to the unit variable cost','When total manufacturing cost (fixed + variable × demand) is lower than total purchased cost (supplier price × demand)','When the supplier unit cost exceeds only the in-house variable cost per unit','When demand uncertainty is low across all simulation trials'],
+   correct:1,explanation:'=IF(Manufacturing_Total < Purchased_Total, "Make", "Buy"). The fixed cost matters: at low demand, fixed costs per unit are high (buying may be cheaper); at high demand, fixed costs are spread, making manufacturing cheaper. The simulation shows the distribution of outcomes across demand scenarios.'},
+  {id:'m47',topicId:'t2_6',difficulty:'Easy',week:4,
+   question:'In the Sanotronics profit formula: Profit = (249 − c_l − c_p) × d − 1,000,000. What does the 1,000,000 represent?',
+   options:['Per-unit overhead cost that must be subtracted for each unit','Total fixed costs incurred regardless of demand — subtracted from total contribution (not per unit)','The maximum possible loss — subtracting it gives a conservative estimate','A conversion factor from cents to dollars'],
+   correct:1,explanation:'$1,000,000 is the total fixed cost (e.g. equipment, facilities). It does not change with demand. Revenue and variable costs scale with d, but fixed costs are paid regardless. This structure means profit can be negative if contribution margin × demand < $1M.'},
+  {id:'m48',topicId:'t2_6',difficulty:'Moderate',week:5,
+   question:'In the gas price model, why is XLOOKUP used with RANDBETWEEN(1, 86) to generate % change values?',
+   options:['To look up the 86th percentile of the gas price distribution','To randomly select one row from 86 historical % change observations, preserving the empirical distribution','To generate a Poisson random number with mean 86','To find the closest match to a RAND() value in the CDF table'],
+   correct:1,explanation:'RANDBETWEEN(1,86) picks a random integer row index. XLOOKUP retrieves the % change value in that row. This is empirical resampling: each historical observation has equal probability (1/86) of being selected each trial, preserving the true historical distribution shape.'},
+  // ── Excel Functions (t2_7) ────────────────────────────────────────────────
+  {id:'m49',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'What does =NORM.DIST(x, mean, sd, TRUE) calculate?',
+   options:['A random value from a normal distribution','The probability that a normal random variable equals exactly x','The cumulative probability P(X ≤ x) for a normal distribution','The inverse of the standard normal distribution'],
+   correct:2,explanation:'NORM.DIST(x, μ, σ, TRUE) = P(X ≤ x), the CDF. NORM.DIST(x, μ, σ, FALSE) = the PDF value (height of the bell curve at x). To generate random values for simulation, use NORM.INV(RAND(), μ, σ) — the opposite direction.'},
+  {id:'m50',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'What is the key difference between =NORM.DIST(x, μ, σ, TRUE) and =NORM.INV(p, μ, σ)?',
+   options:['NORM.DIST converts a value to a probability; NORM.INV converts a probability to a value (inverse)','NORM.DIST generates random values; NORM.INV calculates expected values','They are identical functions with different names','NORM.DIST works for continuous; NORM.INV works only for discrete distributions'],
+   correct:0,explanation:'NORM.DIST: x → probability (forward direction). NORM.INV: probability → x (inverse direction). For simulation, we use NORM.INV(RAND()) because RAND() gives a uniform random probability [0,1] and we need the corresponding x value from the normal distribution.'},
+  {id:'m51',topicId:'t2_7',difficulty:'Easy',week:4,
+   question:'=POISSON.DIST(3, 5, FALSE) returns 0.1404. What does this value represent?',
+   options:['P(X ≤ 3) for Poisson with mean 5 (cumulative)','P(X = 3) for Poisson with mean 5 (exact probability)','P(X = 5) for Poisson with mean 3 (exact probability)','The variance of a Poisson with mean 5'],
+   correct:1,explanation:'FALSE in POISSON.DIST gives the exact (PMF) probability: P(X = 3 | λ = 5) = 0.1404. TRUE would give cumulative P(X ≤ 3). Similarly in BINOM.DIST: FALSE = exact, TRUE = cumulative.'},
+  {id:'m52',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'In =EXPON.DIST(x, lambda, FALSE), what does the lambda argument represent?',
+   options:['The mean of the exponential distribution','The rate parameter λ = 1/mean — if mean = 200 hours, then λ = 0.005','The probability of an event occurring in one unit of time','The standard deviation of the distribution'],
+   correct:1,explanation:'λ is the rate (events per unit time). Mean = 1/λ. If breakdowns average every 200 hours, λ = 1/200 = 0.005. Note the Excel convention: =EXPON.DIST(x, 0.005, FALSE) gives the PDF value at x for this distribution.'},
+  {id:'m53',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'Why should =STDEV.S() rather than =STDEV.P() be used when analysing simulation output?',
+   options:['STDEV.S is always numerically larger than STDEV.P','Simulation output is a sample from a larger population of possible outcomes — STDEV.S uses (n−1) denominator for unbiased estimation','STDEV.P cannot handle negative values in the output range','STDEV.S automatically removes outliers from the calculation'],
+   correct:1,explanation:'STDEV.P uses n (population SD); STDEV.S uses n−1 (sample SD, Bessel\'s correction). Simulation output is always a sample — we\'re estimating the true population SD from finitely many trials. STDEV.S gives an unbiased estimate. For n=1000, the difference is tiny but correct practice matters.'},
+  {id:'m54',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'In =CONFIDENCE.T(alpha, std_dev, n), what does the "alpha" argument represent?',
+   options:['The confidence level (e.g., 0.95 for 95% confidence)','The significance level (e.g., 0.05 for a 95% CI)','The number of standard deviations in the interval','The t-statistic for the sample mean'],
+   correct:1,explanation:'Alpha = significance level = 1 − confidence level. For a 95% CI, alpha = 0.05. CONFIDENCE.T returns the half-width of the CI: the interval is [mean − CONFIDENCE.T, mean + CONFIDENCE.T]. The function uses the t-distribution to account for estimating σ from the sample.'},
+  {id:'m55',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'Which Excel formula generates a random value from a Normal distribution with mean 15,000 and standard deviation 4,500?',
+   options:['=NORM.DIST(RAND(), 15000, 4500, TRUE)','=NORM.INV(RAND(), 15000, 4500)','=NORM.S.DIST(RAND(), TRUE) * 4500 + 15000','=RANDBETWEEN(10500, 19500)'],
+   correct:1,explanation:'=NORM.INV(p, μ, σ): given a probability p from RAND() [uniform 0–1], returns the x value where P(X ≤ x) = p for N(15000, 4500). This is the inverse CDF method — the standard approach for simulation. NORM.DIST goes the wrong direction (value → probability).'},
+  {id:'m56',topicId:'t2_7',difficulty:'Moderate',week:4,
+   question:'After running 1,000 simulation trials, which formula correctly calculates the proportion of trials where profit is negative (a loss)?',
+   options:['=AVERAGE(B27:B1026 < 0)','=COUNTIF(B27:B1026, "<0") / COUNT(B27:B1026)','=SUMIF(B27:B1026, "<0") / 1000','=PERCENTILE.EXC(B27:B1026, 0.10)'],
+   correct:1,explanation:'=COUNTIF(range, "<0") counts the number of negative profit values. Dividing by COUNT gives the sample proportion = estimated probability of loss. SUMIF adds the negative values (not the count). PERCENTILE gives the 10th percentile value, not a proportion.'},
+  // ── Best Practice & Theory (t2_8) ─────────────────────────────────────────
+  {id:'m57',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'An analyst runs a simulation and the mean profit ($750K) is higher than the base-case profit ($500K). What likely explains this difference?',
+   options:['The simulation made arithmetic errors','Base-case uses most-likely value for each input independently; simulation samples the full distributions and captures non-linear effects and distributional skewness in the output','The base-case is always less reliable than the simulation mean','This discrepancy proves the distributions are incorrectly specified'],
+   correct:1,explanation:'When profit is non-linear in its inputs (e.g. MIN/MAX functions, threshold effects), the expected value from sampling the full distribution often differs from the base-case. This is Jensen\'s Inequality — and exactly why simulation provides richer insights than single-point analysis.'},
+  {id:'m58',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'What does it mean to say a simulation model has been "validated"?',
+   options:['All Excel formulas produce correct numerical outputs for test inputs','The model\'s structure, assumptions, and outputs have been verified to reasonably represent the real-world system being studied','The simulation has been run at least 5,000 times without crashing','A statistician has approved the probability distribution choices'],
+   correct:1,explanation:'Validation asks: "Does the model represent reality?" (not just "are the formulas correct?"). A model can be verified (error-free formulas) but invalid (wrong assumptions). Both checks are necessary — and valid models can still be wrong if key assumptions change.'},
+  {id:'m59',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'An analyst changes the standard deviation of demand from 100 to 200 and re-runs the simulation. The probability interval widens significantly. What technique is this, and what does the result indicate?',
+   options:['Verification — the wider interval confirms the formulas are error-free','Sensitivity analysis — demand uncertainty has a major impact on profit variability, suggesting demand forecasting is critical','Validation — the wider interval shows the model better matches historical data','Scenario analysis — higher SD represents the worst-case demand scenario'],
+   correct:1,explanation:'Sensitivity analysis: change one input distribution, hold others constant, observe the output change. Result: profit variability is highly sensitive to demand uncertainty. This tells managers where to focus data collection or risk mitigation efforts.'},
+  {id:'m60',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'A simulation model was verified (all formulas correct) but later produced unrealistic results. What type of error occurred?',
+   options:['A verification error — the formulas were incorrectly reviewed','A calibration error — the discount rate was set incorrectly','A validation failure — the model\'s assumptions do not accurately represent the real-world system','A sampling error — the number of trials was insufficient'],
+   correct:2,explanation:'Verification ≠ Validation. Verification confirms "the model does what we intended." Validation confirms "what we intended matches reality." A model can pass verification (no formula bugs) but fail validation (wrong real-world assumptions).'},
+  {id:'m61',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'Why is it important to document assumptions behind each probability distribution used in a simulation?',
+   options:['Excel requires documentation before running Data Table','Assumptions may be challenged by stakeholders — documentation allows reviewers to assess validity and challenge unrealistic assumptions','Documentation automatically improves simulation accuracy','Documentation is only required for academic submissions, not business applications'],
+   correct:1,explanation:'Simulation results are only as good as their inputs. Documented assumptions allow: (1) peer review and challenge, (2) updating when new data arrives, (3) sensitivity testing of key assumptions, (4) stakeholder confidence. "Garbage in, garbage out" — documented garbage is at least identifiable.'},
+  {id:'m62',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'Why can\'t simulation alone identify the optimal inventory replenishment level Q?',
+   options:['Simulation can only handle Q values below 100 units','Simulation evaluates the performance of a GIVEN Q — to find the best Q, you must run separate simulations for each candidate value and compare results','Excel\'s Data Table only supports one Q value per simulation run','The optimal Q always equals the mean demand, making simulation unnecessary'],
+   correct:1,explanation:'This is the core limitation of simulation vs. optimisation. You must choose which Q values to test and run a simulation for each. Optimisation methods (LP, solver) can search the solution space automatically — simulation cannot. Simulation answers "how does Q=90 perform?" not "what is the best Q?"'},
+  {id:'m63',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'What is the primary purpose of running what-if scenario analysis BEFORE building a full Monte Carlo simulation?',
+   options:['To eliminate the need for simulation by finding the optimal scenario','To understand the range of possible outcomes and assess whether Monte Carlo\'s additional complexity is justified','Excel requires what-if analysis before Data Table can function','What-if analysis automatically seeds RAND() for the Monte Carlo model'],
+   correct:1,explanation:'Scenario analysis is a quick first step: it reveals whether uncertainty matters (if all scenarios give similar results, simulation adds little value). It also helps identify which variables are most uncertain, informing which distributions to specify in the Monte Carlo model.'},
+  {id:'m64',topicId:'t2_8',difficulty:'Hard',week:5,
+   question:'In simulation, why is it better to model ANNUAL CHANGES (% change in gas price) rather than absolute values when the variable is autocorrelated across periods?',
+   options:['Percentage changes are always easier to compute in Excel','Absolute values in consecutive periods are highly correlated, making independent sampling invalid; percentage changes tend to be approximately independent, allowing valid independent year-by-year sampling','Percentage changes always follow Normal distributions, simplifying setup','Modelling absolute values requires more historical data than percentage changes'],
+   correct:1,explanation:'Gas price correlation: absolute r=0.88 (strong), % change r=0.16 (negligible). Independently sampling the % change and multiplying by the previous year\'s price preserves the price level trend while allowing independent year-to-year variation — the key insight demonstrated in the lecture.'},
+  {id:'m65',topicId:'t2_8',difficulty:'Moderate',week:2,
+   question:'Which of the following is NOT a recognised advantage of Monte Carlo simulation?',
+   options:['Results can be presented visually as histograms that are easy for managers to interpret','Simulation can model complex systems with many interdependencies without requiring strong simplifying assumptions','Simulation automatically identifies the optimal decision among all possible alternatives','Simulation quantifies the probability of specific business outcomes'],
+   correct:2,explanation:'Simulation does NOT optimise — it evaluates. It cannot automatically search all possible alternatives and identify the best one. That is the role of optimisation models (LP, integer programming, solver). Simulation answers "what is the distribution of outcomes for this alternative?"'},
+  {id:'m66',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'A simulation model is built to evaluate a 5-year project. The analyst uses RAND() cells that recalculate with each Data Table row. Why is this important?',
+   options:['Without recalculation, all 1,000 rows would show identical outputs from the base-case values','RAND() recalculation is required to satisfy the Central Limit Theorem for large n','Excel\'s Data Table automatically seeds RAND() without needing it in the model','Recalculating RAND() ensures each trial uses the same random seed for reproducibility'],
+   correct:0,explanation:'Data Table works by recalculating the workbook with a different "column input" for each row, triggering new RAND() values. If RAND() did not recalculate, every row would show the same output. The column input cell must be empty and unrelated to the model — it simply forces recalculation.'},
+  {id:'m67',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'What is the "Law of Large Numbers" principle and how does it apply to Monte Carlo simulation?',
+   options:['With more simulation trials, the sample mean converges to the true population mean of the output distribution','With more variables, the simulation becomes more accurate','The law guarantees that a 1,000-trial simulation will always produce the correct answer','Larger models always produce more reliable results than smaller ones'],
+   correct:0,explanation:'The Law of Large Numbers: as n → ∞, the sample mean → true population mean. For Monte Carlo: as trials increase, the estimated mean profit, estimated P(loss), and estimated probability intervals all converge to their true theoretical values. This is why 5,000 trials gives more stable results than 1,000.'},
+  {id:'m68',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'If you fit a Normal distribution to data that actually has heavy tails, what specific risk does your simulation underestimate?',
+   options:['The expected value of the output','The probability of extreme outcomes (both very large gains and very large losses)','The standard deviation of the output distribution','The median of the output distribution'],
+   correct:1,explanation:'Normal distribution assigns very low probability to extreme values (more than 3σ from mean). If the true distribution has heavy tails, these extremes occur more often in reality. Result: the simulation underestimates the probability of catastrophic losses AND of exceptional gains — a critical issue in financial risk modelling.'},
+  {id:'m69',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'An analyst tests three different distributional assumptions for the key input variable and reports results under each assumption. What is the purpose of this approach?',
+   options:['To guarantee that one of the three assumptions must be correct','To demonstrate that distribution choice matters — if results differ substantially across assumptions, the choice of distribution significantly affects the decision','To satisfy Excel\'s requirement for multiple distribution inputs','To increase the total number of simulation trials used'],
+   correct:1,explanation:'"It is important to test the implications of different modelling approaches" (lecture). This is distributional sensitivity analysis. If all three assumptions give similar conclusions, the decision is robust. If they diverge, the analyst must gather more data or be transparent about the uncertainty in distribution choice.'},
+  {id:'m70',topicId:'t2_8',difficulty:'Easy',week:4,
+   question:'What is the primary purpose of displaying Monte Carlo simulation results as a histogram?',
+   options:['To verify that the RAND() function is generating values correctly','To visually show the distribution of possible outcomes — the range, shape, and relative likelihood of different results — in a form that is intuitive for non-technical stakeholders','To compare the simulation mean against the base-case value','To confirm that the model formulas are logically correct'],
+   correct:1,explanation:'One of simulation\'s key advantages is that output histograms are easy to interpret: managers can immediately see where outcomes cluster, how wide the range is, and whether there is significant downside risk. This visual communication of uncertainty is far more informative than a single base-case number.'},
+  {id:'m71',topicId:'t2_8',difficulty:'Moderate',week:4,
+   question:'A simulation is run with 1,000 trials. The analyst then reruns it with 5,000 trials. Which of the following outcomes is expected?',
+   options:['The mean profit estimate will always increase with more trials','The 95% CI on the mean will be narrower, but the 95% probability interval will remain approximately the same width','Both the CI on the mean and the probability interval will become narrower','The probability of loss will decrease because more trials reduce risk'],
+   correct:1,explanation:'More trials reduce sampling error in the mean estimate (SE = σ/√n → CI narrows). However, the probability interval reflects genuine business outcome variability — that does not shrink with more trials. More trials give a more stable estimate of the interval endpoints, but the interval width itself stays wide because real-world risk is unchanged.'}
+];
+
 let quizData = null;
 let currentMode = 'practice';
+let currentQuiz = 'q1';
+let activeData = null;
 let questions = [];
 let currentIndex = 0;
 let score = 0;
@@ -482,6 +999,22 @@ let answered = false;
 // Auth guard — redirect to home if not authenticated
 if (sessionStorage.getItem('auth') !== '1') {
   window.location.replace('index.html');
+}
+
+function switchQuiz(val) {
+  currentQuiz = val;
+  const q1 = document.getElementById('quiz1Content');
+  const q2 = document.getElementById('quiz2Content');
+  const subtitle = document.getElementById('landingSubtitle');
+  if (val === 'q2') {
+    q1.style.display = 'none';
+    q2.style.display = 'block';
+    subtitle.innerHTML = 'Conceptual multiple-choice questions covering Weeks 2&ndash;5.<br>Monte Carlo simulation, probability distributions, and model interpretation.';
+  } else {
+    q1.style.display = 'block';
+    q2.style.display = 'none';
+    subtitle.innerHTML = 'Conceptual multiple-choice questions covering Weeks 1&ndash;3.<br>Choose a mode to start practising.';
+  }
 }
 
 async function loadData() {
@@ -502,16 +1035,19 @@ function renderTopicList() {
 
 function startQuiz(mode) {
   currentMode = mode;
+  activeData = currentQuiz === 'q2' ? quiz2Data : quizData;
   score = 0;
   answers = {};
   currentIndex = 0;
 
-  if (mode === 'practice') {
-    questions = shuffle([...quizData.questions]);
+  if (currentQuiz === 'q2' && mode === 'mock') {
+    questions = shuffle([...quiz2MockPool]).slice(0, 15);
+  } else if (mode === 'practice') {
+    questions = shuffle([...activeData.questions]);
   } else {
-    // mock: 1 question per topic
-    questions = quizData.topics.map(topic => {
-      const pool = quizData.questions.filter(q => q.topicId === topic.id);
+    // quiz1 mock: 1 question per topic
+    questions = activeData.topics.map(topic => {
+      const pool = activeData.questions.filter(q => q.topicId === topic.id);
       return pool[Math.floor(Math.random() * pool.length)];
     });
     questions = shuffle(questions);
@@ -550,7 +1086,7 @@ function renderQuestion() {
 
   answered = false;
   const q = questions[currentIndex];
-  const topic = quizData.topics.find(t => t.id === q.topicId);
+  const topic = activeData.topics.find(t => t.id === q.topicId);
   const total = questions.length;
 
   document.getElementById('progressText').textContent = `Question ${currentIndex + 1} of ${total}`;
@@ -562,7 +1098,7 @@ function renderQuestion() {
 
   document.getElementById('qWeekBadge').textContent = `Week ${q.week}`;
   document.getElementById('qTopicName').textContent = topic ? topic.name : '';
-  document.getElementById('qText').textContent = q.question;
+  document.getElementById('qText').innerHTML = q.question;
 
   const letters = ['A', 'B', 'C', 'D'];
   const list = document.getElementById('optionsList');
@@ -611,7 +1147,7 @@ function renderQuestion() {
       fh.textContent = `Incorrect. The correct answer is ${letters[q.correct]}.`;
       fh.className = 'feedback-header wrong';
     }
-    ft.textContent = q.explanation;
+    ft.innerHTML = q.explanation;
     document.getElementById('skipBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'inline-block';
   } else {
@@ -658,7 +1194,7 @@ function selectOption(selectedIdx) {
     fh.textContent = `Incorrect. The correct answer is ${['A','B','C','D'][q.correct]}.`;
     fh.className = 'feedback-header wrong';
   }
-  ft.textContent = q.explanation;
+  ft.innerHTML = q.explanation;
 
   document.getElementById('skipBtn').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'inline-block';
@@ -690,6 +1226,13 @@ function updateTimer() {
   if (timeLeft <= 60) { el.classList.remove('warn'); el.classList.add('danger'); }
 }
 
+function findQuestion(id) {
+  const inActive = activeData.questions.find(q => q.id === id);
+  if (inActive) return inActive;
+  if (currentQuiz === 'q2') return quiz2MockPool.find(q => q.id === id);
+  return null;
+}
+
 function showResults() {
   clearInterval(timerInterval);
   document.getElementById('quizScreen').style.display = 'none';
@@ -714,7 +1257,7 @@ function showResults() {
 
   // Topic breakdown
   const breakdown = document.getElementById('topicBreakdown');
-  const topicsShown = quizData.topics.filter(t => questions.some(q => q.topicId === t.id));
+  const topicsShown = activeData.topics.filter(t => questions.some(q => q.topicId === t.id));
   breakdown.innerHTML = topicsShown.map(topic => {
     const qs = questions.filter(q => q.topicId === topic.id);
     const ans = answerList.filter(a => qs.some(q => q.id === a.questionId));
@@ -736,7 +1279,7 @@ function showResults() {
   const reviewList = document.getElementById('reviewList');
   const letters = ['A', 'B', 'C', 'D'];
   reviewList.innerHTML = answerList.map(a => {
-    const q = quizData.questions.find(q => q.id === a.questionId);
+    const q = findQuestion(a.questionId);
     if (!q) return '';
     const cls = a.correct ? 'review-correct' : 'review-wrong';
     const yourAns = a.selected === -1 ? 'Skipped' : `${letters[a.selected]}. ${q.options[a.selected]}`;
