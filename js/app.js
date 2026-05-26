@@ -1,7 +1,7 @@
 import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
 // ─── State ────────────────────────────────────────────────────
-const Q_VERSION = '2026-05-11-v1';
+const Q_VERSION = '2026-05-26-v1';
 if (localStorage.getItem('qVersion') !== Q_VERSION) {
   localStorage.removeItem('questionStatus');
   localStorage.setItem('qVersion', Q_VERSION);
@@ -111,6 +111,7 @@ async function startWebR() {
 
       await state.webR.evalRVoid("webr::install('dplyr')");
       await state.webR.evalRVoid("webr::install('ggplot2')");
+      await state.webR.evalRVoid("webr::install('cluster')");
       await state.webR.evalRVoid("library(dplyr); library(ggplot2)");
 
       // Pre-build Week 3 Set 1 (KiwiConnect) environment so 'customers' is always available
@@ -169,6 +170,74 @@ save(members, file = '/tmp/env_w3s3.RData')
 rm(members)
         `);
         state.savedSetEnvs.add('w3s3');
+      } catch (_) { /* non-fatal */ }
+
+      // Pre-build Week 5 CityBank NZ (shared by Set 1 and Set 2)
+      try {
+        $('load-status').textContent = 'Preparing datasets…';
+        await state.webR.evalRVoid(`
+set.seed(705)
+true_ages <- c(
+  round(runif(20, 18, 29)),
+  round(runif(35, 30, 39)),
+  round(runif(40, 40, 49)),
+  round(runif(30, 50, 59)),
+  round(runif(25, 60, 79))
+)
+true_cats <- c(rep("<30",20), rep("30-39",35), rep("40-49",40), rep("50-59",30), rep("60+",25))
+perm <- sample(150)
+true_ages <- true_ages[perm]
+true_cats <- true_cats[perm]
+age_vals <- true_ages
+age_vals[23] <- 999
+age_vals[87] <- 4545
+income <- round(11 * true_ages + 280 + rnorm(150, 0, 280))
+income <- pmax(income, 80)
+t_base <- ifelse(true_ages < 30, 8, ifelse(true_ages < 40, 20, ifelse(true_ages < 50, 28, ifelse(true_ages < 60, 22, 13))))
+transactions <- pmax(round(rnorm(150, t_base, 7)), 0)
+citybank <- data.frame(
+  customer_id = 5001:5150,
+  age = age_vals,
+  age_cat = true_cats,
+  income = income,
+  transactions = transactions,
+  stringsAsFactors = FALSE
+)
+save(citybank, file = '/tmp/env_w5s1.RData')
+save(citybank, file = '/tmp/env_w5s2.RData')
+rm(citybank, true_ages, true_cats, perm, age_vals, income, t_base, transactions)
+        `);
+        state.savedSetEnvs.add('w5s1');
+        state.savedSetEnvs.add('w5s2');
+      } catch (_) { /* non-fatal */ }
+
+      // Pre-build Week 6 ShopCity NZ (shared by Set 1 and Set 2)
+      try {
+        await state.webR.evalRVoid(`
+set.seed(706)
+cl_id <- c(rep(1,30), rep(2,35), rep(3,50), rep(4,40), rep(5,30), rep(6,15))
+age_m <- c(22, 22, 45, 45, 45, 63)
+inc_m <- c(26, 86, 58, 28, 88, 35)
+sco_m <- c(79, 79, 50, 21, 19, 22)
+Age <- pmax(pmin(round(rnorm(200, age_m[cl_id], 5)), 70), 15)
+Annual_Income <- pmax(pmin(round(rnorm(200, inc_m[cl_id], 10)), 137), 15)
+Spending_Score <- pmax(pmin(round(rnorm(200, sco_m[cl_id], 10)), 99), 1)
+Gender <- sample(c("Male","Female"), 200, replace=TRUE, prob=c(0.45,0.55))
+perm2 <- sample(200)
+shopcity <- data.frame(
+  customer_id = 6001:6200,
+  Gender = Gender[perm2],
+  Age = Age[perm2],
+  Annual_Income = Annual_Income[perm2],
+  Spending_Score = Spending_Score[perm2],
+  stringsAsFactors = FALSE
+)
+save(shopcity, file = '/tmp/env_w6s1.RData')
+save(shopcity, file = '/tmp/env_w6s2.RData')
+rm(shopcity, cl_id, age_m, inc_m, sco_m, Age, Annual_Income, Spending_Score, Gender, perm2)
+        `);
+        state.savedSetEnvs.add('w6s1');
+        state.savedSetEnvs.add('w6s2');
       } catch (_) { /* non-fatal */ }
 
       // Pre-build Week 4 FreshMart NZ (shared by Set 1 and Set 2)
